@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Secteur A SVTU - Méthodes de Laboratoire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            background: white;
+            border-bottom-color: #0066cc;
+            color: #0066cc;
+        }
+
+        .tab-button:hover {
+            background: #e0e0e0;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        h1 {
+            color: #0066cc;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        h2 {
+            color: #0066cc;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #333;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .question-box {
+            background: #f9f9f9;
+            border-left: 4px solid #0066cc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .question-text {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 12px 15px;
+            margin: 8px 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            background: #f0f0f0;
+            border-color: #0066cc;
+        }
+
+        .option.selected {
+            background: #e6f2ff;
+            border-color: #0066cc;
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .explanation {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            line-height: 1.6;
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: #0066cc;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #0066cc;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            background: #0066cc;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #0052a3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .score-display {
+            background: #e7f3ff;
+            border: 2px solid #0066cc;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .score-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #0066cc;
+        }
+
+        .score-text {
+            font-size: 18px;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .method-section {
+            margin: 25px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #555;
+            margin: 10px 0;
+        }
+
+        ul, ol {
+            margin: 10px 0 10px 25px;
+            line-height: 1.7;
+        }
+
+        li {
+            color: #555;
+            margin: 8px 0;
+        }
+
+        strong {
+            color: #333;
+        }
+
+        .results {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .results-title {
+            font-size: 28px;
+            color: #0066cc;
+            margin: 20px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Secteur A SVTU - Méthodes de Laboratoire</h1>
+        <p style="color: #666; margin-bottom: 20px;">Préparez-vous au contrôle continu avec les vraies méthodes du secteur A</p>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('quiz')">Quiz (20 questions)</button>
+            <button class="tab-button" onclick="switchTab('methodes')">Méthodes Détaillées</button>
+        </div>
+
+        <!-- TAB QUIZ -->
+        <div id="quiz" class="tab-content active">
+            <div class="progress-text">
+                <span id="question-counter">Question 1 / 20</span>
+                <span style="float: right;">Score: <span id="current-score">0</span>/20</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress" style="width: 5%;"></div>
+            </div>
+
+            <div id="quiz-container"></div>
+
+            <div class="buttons">
+                <button id="prev-btn" onclick="previousQuestion()" disabled>Précédent</button>
+                <button id="next-btn" onclick="nextQuestion()">Suivant</button>
+                <button id="restart-btn" onclick="restartQuiz()" style="display: none;">Recommencer</button>
+            </div>
+        </div>
+
+        <!-- TAB METHODES -->
+        <div id="methodes" class="tab-content">
+            <h2>Les 13 Méthodes Essentielles du Secteur A</h2>
+            
+            <div class="method-section">
+                <h3>1. Microscopie Optique</h3>
+                <p><strong>Résolution:</strong> 200 nm (limite théorique Abbe)</p>
+                <p><strong>Grossissement utile:</strong> 400-1000x (au-delà = agrandissement vide)</p>
+                <p><strong>Types:</strong></p>
+                <ul>
+                    <li>Fond clair: Observation standard des cellules colorées</li>
+                    <li>Fond noir: Cellules vivantes sans coloration</li>
+                    <li>Contraste de phase: Structures transparentes</li>
+                    <li>Fluorescence: Détection de fluorophores</li>
+                </ul>
+            </div>
+
+            <div class="method-section">
+                <h3>2. Préparation d'Échantillons (Fixation-Déshydratation-Inclusion)</h3>
+                <p><strong>Fixation:</strong> Stabiliser les structures et protéines</p>
+                <ul>
+                    <li>Optique: Formaldéhyde 4% ou Ethanol 70%</li>
+                    <li>MET: Glutaraldéhyde 2.5% PUIS Tétraoxyde d'osmium (ordre CRITIQUE)</li>
+                    <li>Durée: 2-4h à température ambiante</li>
+                </ul>
+                <p><strong>Déshydratation:</strong> Remplacer l'eau progressivement</p>
+                <ul>
+                    <li>Éthanol 70% → 90% → 100% (5-10 min chaque)</li>
+                    <li>Progressivité ESSENTIELLE (évite rupture des tissus)</li>
+                </ul>
+                <p><strong>Inclusion:</strong> Infiltration en paraffine (optique) ou résines (MET)</p>
+                <ul>
+                    <li>Température: 37°C infiltration, 60°C imprégnation</li>
+                    <li>Résultat: Bloc solide pour microtomie</li>
+                </ul>
+            </div>
+
+            <div class="method-section">
+                <h3>3. Microtomie et Colorations Histologiques</h3>
+                <p><strong>Microtomie:</strong> Découper le tissu en sections fines</p>
+                <ul>
+                    <li>Optique: 5-10 μm d'épaisseur</li>
+                    <li>MET: 70-90 nm (ultra-fines)</li>
+                </ul>
+                <p><strong>Colorations principales:</strong></p>
+                <ul>
+                    <li>H&E (Hématoxyline-Éosine): Noyau=Bleu-violet, Cytoplasme=Rose (STANDARD)</li>
+                    <li>PAS (Acide Périodique Schiff): Polysaccharides=Magenta</li>
+                    <li>Gram: Gram+=Violet, Gram-=Rose (bactéries)</li>
+                    <li>Masson: Collagène=Bleu, Muscle=Rouge</li>
+                </ul>
+            </div>
+
+            <div class="method-section">
+                <h3>4. Électrophorèse sur Gel d'Agarose</h3>
+                <p><strong>Sépare l'ADN par TAILLE dans un champ électrique</strong></p>
+                <p><strong>Protocole:</strong></p>
+                <ul>
+                    <li>Gel d'agarose 0.8% (poids pour volume)</li>
+                    <li>Dépôt de l'ADN + tampon de charge (bleu de bromophénol)</li>
+                    <li>Voltage: 100V, Durée: 1h environ</li>
+                    <li>Révélation: UV (éthidium bromide ou SYBR Green)</li>
+                </ul>
+                <p><strong>Formule:</strong> Migration inversement proportionnelle au ln(taille)</p>
+                <p><strong>Tampon:</strong> TAE (Tris-acétate-EDTA) ou TBE</p>
+            </div>
+
+            <div class="method-section">
+                <h3>5. Extraction et Analyse d'ADN</h3>
+                <p><strong>Extraction CTAB:</strong></p>
+                <ul>
+                    <li>Broyage du tissu + Lysis (NaCl, CTAB, eau)</li>
+                    <li>EDTA: Chélate Mg²⁺ et Ca²⁺, désactive les DNases</li>
+                    <li>Centrifugation: Précipitation de l'ADN</li>
+                    <li>Lavage: Enlever contaminants polysaccharides</li>
+                </ul>
+                <p><strong>PCR (Réaction en Chaîne par Polymérase):</strong></p>
+                <ul>
+                    <li>Dénaturation: 94°C 15 sec (briser doubles brins)</li>
+                    <li>Hybridation: 55°C 30 sec (amorces s'attachent)</li>
+                    <li>Élongation: 72°C 1 min/kb (Taq synthétise)</li>
+                    <li>Nombre de cycles: 30-35 (ESSENTIEL pour éviter plateaux)</li>
+                </ul>
+            </div>
+
+            <div class="method-section">
+                <h3>6. Western Blot (Immunoblot)</h3>
+                <p><strong>Détecte les protéines spécifiques par anticorps</strong></p>
+                <p><strong>Étapes:</strong></p>
+                <ul>
+                    <li>1. Extraction protéique + Dosage (Bradford, BCA)</li>
+                    <li>2. Électrophorèse SDS-PAGE: Sépare protéines par masse moléculaire</li>
+                    <li>3. Transfert: Protéines transférées sur membrane PVDF ou nitrocellulose</li>
+                    <li>4. Blocage: Saturer les sites non-spécifiques (lait 5% ou BSA)</li>
+                    <li>5. Incubation anticorps primaire: Reconnaît protéine cible</li>
+                    <li>6. Lavage + Anticorps secondaire: Conjugué à HRP ou fluorophore</li>
+                    <li>7. Révélation: Chimioluminescence (film) ou fluorescence</li>
+                </ul>
+                <p><strong>Avantage:</strong> Quantitatif, spécifique, détecte modifications post-traductionnelles</p>
+            </div>
+
+            <div class="method-section">
+                <h3>7. Northern Blot</h3>
+                <p><strong>Détecte les ARN spécifiques par sonde</strong></p>
+                <p><strong>Étapes:</strong></p>
+                <ul>
+                    <li>1. Extraction ARN (TRIzol ou guanidinium)</li>
+                    <li>2. Électrophorèse dénaturante (gel d'agarose formaldéhyde)</li>
+                    <li>3. Transfert: ARN transférés sur membrane (nylon)</li>
+                    <li>4. Hybridation: Sonde ADN radioactive ou fluorescente</li>
+                    <li>5. Lavage stringent: Enlever hybridations non-spécifiques</li>
+                    <li>6. Révélation: Autoradiographie ou imagerie</li>
+                </ul>
+                <p><strong>Utilité:</strong> Déterminer expression génique, stabilité ARN</p>
+            </div>
+
+            <div class="method-section">
+                <h3>8. Southern Blot</h3>
+                <p><strong>Détecte les séquences ADN spécifiques (polymorphismes, mutations)</strong></p>
+                <p><strong>Étapes:</strong></p>
+                <ul>
+                    <li>1. ADN génomique + Digestion enzymatique (restriction)</li>
+                    <li>2. Électrophorèse: Sépare fragments par taille</li>
+                    <li>3. Transfert: ADN transférés sur membrane (dénaturants)</li>
+                    <li>4. Hybridation: Sonde ADN radioactive complémentaire</li>
+                    <li>5. Révélation: Autoradiographie</li>
+                </ul>
+                <p><strong>Utilité:</strong> Génotypage, détection mutations, fingerprinting</p>
+            </div>
+
+            <div class="method-section">
+                <h3>9. Immunoprécipitation (IP) et Co-IP</h3>
+                <p><strong>Isoler protéine spécifique et ses partenaires d'interaction</strong></p>
+                <p><strong>Protocole:</strong></p>
+                <ul>
+                    <li>1. Lyse cellulaire: Préparer extrait cellulaire (détergent doux)</li>
+                    <li>2. Incubation anticorps: Anticorps anti-protéine cible</li>
+                    <li>3. Incubation billes: Billes magnétiques ou protéine A/G couplées</li>
+                    <li>4. Magnétisation: Récupérer complexe protéique</li>
+                    <li>5. Lavage: Enlever contaminants</li>
+                    <li>6. Élution: Récupérer protéines liées</li>
+                    <li>7. Analyse: Western blot ou spectrométrie de masse</li>
+                </ul>
+                <p><strong>Avantage:</strong> Identifier interactions protéine-protéine in vivo</p>
+            </div>
+
+            <div class="method-section">
+                <h3>10. Immunofluorescence (IF)</h3>
+                <p><strong>Localiser protéines spécifiques avec antibodies fluorescents</strong></p>
+                <p><strong>Direct:</strong> Anticorps directement couplé à fluorophore</p>
+                <p><strong>Indirect:</strong> Anticorps primaire + anticorps secondaire fluorescent</p>
+                <p><strong>Protocole:</strong></p>
+                <ul>
+                    <li>1. Fixation et perméabilisation: Accès aux antigènes</li>
+                    <li>2. Blocage non-spécifique: BSA, sérum</li>
+                    <li>3. Incubation anticorps: Primaire puis secondaire</li>
+                    <li>4. Lavages: Entre chaque incubation</li>
+                    <li>5. Montage: Milieu de montage avec DAPI (noyau)</li>
+                    <li>6. Observation: Microscope fluorescence ou confocal</li>
+                </ul>
+            </div>
+
+            <div class="method-section">
+                <h3>11. Détection d'Apoptose: Annexine V et Iodure de Propidium</h3>
+                <p><strong>Annexine V:</strong> Se lie à la phosphatidylsérine (exposée sur membrane cellulaire apoptotique)</p>
+                <p><strong>Iodure de Propidium (PI):</strong> Intercale dans ADN, seulement si membrane perméabilisée (mort cellulaire)</p>
+                <p><strong>Combinaison:</strong></p>
+                <ul>
+                    <li>Annexine V+ / PI-: Apoptose précoce (membrane intacte)</li>
+                    <li>Annexine V+ / PI+: Apoptose tardive (membrane compromise)</li>
+                    <li>Annexine V- / PI+: Nécrose ou mort cellulaire</li>
+                    <li>Annexine V- / PI-: Cellules vivantes saines</li>
+                </ul>
+                <p><strong>Analyse:</strong> Flow cytometry (cytométrie en flux)</p>
+            </div>
+
+            <div class="method-section">
+                <h3>12. Chromatographies (Séparation de Protéines/Molécules)</h3>
+                <p><strong>Exclusion Stérique (SEC ou Gel Filtration):</strong></p>
+                <ul>
+                    <li>Sépare par: TAILLE / POIDS MOLÉCULAIRE</li>
+                    <li>Résultat: Grosses molécules sortent EN PREMIER</li>
+                    <li>Usage: Purification protéines, déterminer masse native</li>
+                </ul>
+                <p><strong>Échange d'Ions (IEC):</strong></p>
+                <ul>
+                    <li>Sépare par: CHARGE ÉLECTRIQUE</li>
+                    <li>Types: Échange anionique (retient protéines négatives), cationique (positives)</li>
+                    <li>Élution: Gradient de pH ou force ionique</li>
+                </ul>
+                <p><strong>Chromatographie d'Affinité:</strong></p>
+                <ul>
+                    <li>Sépare par: LIAISON SPÉCIFIQUE AU LIGAND</li>
+                    <li>Exemples: Protéine A pour anticorps, glutathion pour protéines GST</li>
+                    <li>Avantage: Très sélective et efficace</li>
+                </ul>
+                <p><strong>HPLC (Chromatographie Liquide Haute Performance):</strong></p>
+                <ul>
+                    <li>Haute pression et résolution très élevée</li>
+                    <li>Analyse complexe de peptides, protéines, métabolites</li>
+                </ul>
+                <p><strong>Chromatographie Liquide-Masse (LC-MS):</strong></p>
+                <ul>
+                    <li>Couplage HPLC + spectrométrie de masse</li>
+                    <li>Identification directe des molécules par rapport m/z</li>
+                </ul>
+            </div>
+
+            <div class="method-section">
+                <h3>13. Microscopie Électronique (MET et MEB)</h3>
+                <p><strong>MET (Transmission):</strong></p>
+                <ul>
+                    <li>Résolution: 0.1-1 nm (vs 200 nm optique)</li>
+                    <li>Révèle: Ultrastructure cellulaire, organelles, membranes</li>
+                    <li>Fixation double: Glutaraldéhyde + OsO₄ (ordre CRITIQUE)</li>
+                    <li>Coupes ultra-fines: 70-90 nm</li>
+                </ul>
+                <p><strong>MEB (Balayage):</strong></p>
+                <ul>
+                    <li>Images 3D de surface</li>
+                    <li>Résolution: 1-20 nm</li>
+                    <li>Préparation: Métallisation (or, palladium)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        const questions = [
+            {
+                question: "Quelle est la résolution limite d'un microscope optique?",
+                options: ["50 nm", "200 nm", "500 nm", "1000 nm"],
+                correct: 1,
+                explanation: "La résolution théorique limite d'un microscope optique est d'environ 200 nm (limite d'Abbe). C'est déterminé par la longueur d'onde de la lumière utilisée."
+            },
+            {
+                question: "Quel est le grossissement utile maximum d'une microscopie optique avant agrandissement vide?",
+                options: ["400x", "1000x", "2000x", "5000x"],
+                correct: 1,
+                explanation: "Au-delà de 1000x, on entre dans l'agrandissement vide où on ne voit que du flou. Le grossissement utile est généralement 400-1000x."
+            },
+            {
+                question: "Pour la microscopie électronique à transmission (MET), quel est l'ordre correct de fixation?",
+                options: ["OsO4 puis glutaraldéhyde", "Glutaraldéhyde puis OsO4", "Éthanol puis OsO4", "Formaldéhyde puis OsO4"],
+                correct: 1,
+                explanation: "L'ordre CRITIQUE est: Glutaraldéhyde d'abord (fixe les protéines), puis OsO4 (contraste les lipides et prépare les ultra-coupes). Cet ordre est immuable."
+            },
+            {
+                question: "Quel est le rôle de l'EDTA dans l'extraction d'ADN?",
+                options: ["Dissoudre les membranes", "Chélater Mg2+ et Ca2+ pour inactiver les DNases", "Colorer l'ADN", "Amplifier l'ADN"],
+                correct: 1,
+                explanation: "L'EDTA (acide éthylène diamine tétracétique) chélate les ions divalents (Mg2+, Ca2+) dont les DNases dépendent pour fonctionner. En les séquestrant, on protège l'ADN de la dégradation."
+            },
+            {
+                question: "Quel nombre de cycles PCR est standard pour une amplification efficace?",
+                options: ["15-20 cycles", "30-35 cycles", "50-60 cycles", "100+ cycles"],
+                correct: 1,
+                explanation: "30-35 cycles est le standard. Trop peu = amplification insuffisante. Trop = formation de produits non-spécifiques et plateaux de saturation."
+            },
+            {
+                question: "Qu'est-ce qui sépare l'électrophorèse sur gel d'agarose?",
+                options: ["Les protéines par charge", "L'ADN par taille", "Les lipides par hydrophobicité", "Les sucres par polarité"],
+                correct: 1,
+                explanation: "L'électrophorèse sur gel d'agarose sépare l'ADN par TAILLE. Dans un champ électrique, l'ADN migre: plus petit = migration plus rapide."
+            },
+            {
+                question: "Quel tampon utilise-t-on pour l'électrophorèse d'ADN?",
+                options: ["PBS (phosphate buffer)", "TAE (Tris-acétate-EDTA)", "Tris simple", "NaCl pur"],
+                correct: 1,
+                explanation: "TAE (ou TBE) assure la conductivité et le pH pendant la migration. TAE est préféré car il peut être recyclé plusieurs fois sans problème."
+            },
+            {
+                question: "Quel est le rôle du bleu de bromophénol en électrophorèse?",
+                options: ["Colorer l'ADN", "Tampon de charge: aide visualisation et suivre la migration", "Fixer l'ADN au gel", "Amplifier les bandes"],
+                correct: 1,
+                explanation: "Le bleu de bromophénol est inclus dans le tampon de charge. Il permet de visualiser le front de migration et de savoir quand arrêter l'électrophorèse."
+            },
+            {
+                question: "Quel est le rôle de la fixation en histologie?",
+                options: ["Colorer les tissus", "Stabiliser les structures cellulaires et protéines, arrêter la dégradation", "Durcir les tissus", "Tuer les micro-organismes"],
+                correct: 1,
+                explanation: "La fixation stabilise les structures cellulaires et protéines en arrêtant les processus dégradatifs. Si la fixation rate, le reste du protocole échoue."
+            },
+            {
+                question: "Pourquoi déshydrater progressivement dans un protocole histologique?",
+                options: ["Pour tuer les bactéries", "Pour éviter la rupture/déformation des tissus par choc osmotique", "Pour colorer les structures", "Pour accélérer le protocole"],
+                correct: 1,
+                explanation: "La progressivité (70% → 90% → 100%) est ESSENTIELLE. Des transitions brusques causeraient des ruptures et déformations irréversibles du tissu."
+            },
+            {
+                question: "Quel est le principal avantage du Western blot par rapport à d'autres techniques?",
+                options: ["C'est la plus rapide", "Détecte protéines spécifiques et quantifiables, détecte modifications post-traductionnelles", "C'est la moins cher", "Détecte l'ARN"],
+                correct: 1,
+                explanation: "Le Western blot est spécifique (grâce aux anticorps), semi-quantitatif, et peut détecter des modifications comme phosphorylation ou glycosylation."
+            },
+            {
+                question: "En immunoprécipitation (IP), quel est le but principal?",
+                options: ["Amplifier l'ADN", "Isoler une protéine et identifier ses partenaires d'interaction", "Colorer les protéines", "Digérer les protéines"],
+                correct: 1,
+                explanation: "L'IP isole une protéine cible avec ses partenaires d'interaction. La co-IP détecte ces interactions dans un contexte cellulaire naturel."
+            },
+            {
+                question: "Quelle technique sépare les protéines par taille moléculaire?",
+                options: ["Chromatographie d'échange d'ions", "Chromatographie d'exclusion stérique (SEC)", "Chromatographie d'affinité", "Électrophorèse bidimensionnelle"],
+                correct: 1,
+                explanation: "La SEC (ou gel filtration) sépare par TAILLE. Les grosses molécules sortent en premier (volume d'exclusion), petites en dernier (volume total)."
+            },
+            {
+                question: "Comment interprète-t-on Annexine V+ / PI-?",
+                options: ["Cellule vivante saine", "Apoptose précoce", "Nécrose", "Cellule non-viable"],
+                correct: 1,
+                explanation: "Annexine V se lie à phosphatidylsérine exposée sur membrane apoptotique. PI- signifie membrane encore intacte. C'est l'apoptose précoce."
+            },
+            {
+                question: "Qu'est-ce qu'un Northern blot détecte?",
+                options: ["L'ADN", "L'ARN spécifique", "Les protéines", "Les lipides"],
+                correct: 1,
+                explanation: "Northern blot détecte les ARN spécifiques grâce à des sondes complémentaires. Il détermine expression génique et stabilité de l'ARN."
+            },
+            {
+                question: "Quel est l'ordre des étapes dans un protocole d'inclusion en paraffine?",
+                options: ["Inclusion → Imprégnation → Infiltration", "Infiltration → Imprégnation → Inclusion", "Polymérisation → Infiltration → Imprégnation", "Imprégnation → Polymérisation → Infiltration"],
+                correct: 1,
+                explanation: "L'ordre est: 1) Infiltration à basse temp (37°C), 2) Imprégnation à temp plus haute (60°C), 3) Polymérisation (refroidissement)."
+            },
+            {
+                question: "La microscopie électronique à transmission révèle principalement?",
+                options: ["Structure cellulaire générale", "L'ultrastructure cellulaire et détails moléculaires (0.1-1nm)", "L'ADN uniquement", "Seulement les bactéries"],
+                correct: 1,
+                explanation: "MET atteint 0.1-1 nm de résolution (vs 200 nm optique). Révèle organelles, membranes, filaments, complexes protéiques."
+            },
+            {
+                question: "Quel type de chromatographie utilise des billes avec ligands immobilisés?",
+                options: ["Exclusion stérique", "Chromatographie d'affinité", "Échange d'ions", "HPLC"],
+                correct: 1,
+                explanation: "La chromatographie d'affinité utilise des billes avec ligands spécifiques. La protéine cible s'y lie spécifiquement tandis que contaminants passent."
+            },
+            {
+                question: "Combien de temps généralement pour une fixation au formaldéhyde 4%?",
+                options: ["15-30 min", "2-4 heures", "24 heures", "1 semaine"],
+                correct: 1,
+                explanation: "La fixation au formaldéhyde prend 2-4h à température ambiante pour des petits tissus. Plus long pour tissus épais. Durée insuffisante = fixation incomplète."
+            },
+            {
+                question: "Qu'est-ce qu'un Southern blot détecte?",
+                options: ["L'expression génique", "Les séquences ADN spécifiques (mutations, polymorphismes)", "Le niveau protéique", "La morphologie cellulaire"],
+                correct: 1,
+                explanation: "Southern blot détecte l'ADN génomique après digestion enzymatique et hybridation avec sonde. Utilisé pour génotypage et détection mutations."
+            }
+        ];
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
+        }
+
+        function displayQuestion() {
+            const q = questions[currentQuestion];
+            let html = `
+                <div class="question-box">
+                    <div class="question-text">Question ${currentQuestion + 1} / ${questions.length}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div>
+            `;
+            
+            q.options.forEach((option, idx) => {
+                let classes = 'option';
+                if (answered) {
+                    if (idx === q.correct) {
+                        classes += ' correct';
+                    } else if (idx === selectedAnswer && idx !== q.correct) {
+                        classes += ' wrong';
+                    }
+                }
+                html += `<div class="${classes}" onclick="selectAnswer(${idx})">${option}</div>`;
+            });
+            
+            html += `</div>`;
+            
+            if (answered) {
+                html += `
+                    <div class="explanation">
+                        <div class="explanation-title">Explication:</div>
+                        ${q.explanation}
+                    </div>
+                `;
+            }
+            
+            document.getElementById('quiz-container').innerHTML = html;
+            document.getElementById('progress').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            document.getElementById('current-score').textContent = score;
+            
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            document.getElementById('next-btn').disabled = !answered;
+        }
+
+        let selectedAnswer = -1;
+
+        function selectAnswer(idx) {
+            if (answered) return;
+            selectedAnswer = idx;
+            const q = questions[currentQuestion];
+            if (idx === q.correct) {
+                score++;
+            }
+            answered = true;
+            displayQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                answered = false;
+                selectedAnswer = -1;
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                answered = false;
+                selectedAnswer = -1;
+                displayQuestion();
+            }
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / questions.length) * 100);
+            let message = '';
+            if (percentage >= 90) message = 'Excellent! Vous maîtrisez parfaitement les méthodes.';
+            else if (percentage >= 80) message = 'Très bon! Quelques points à revoir.';
+            else if (percentage >= 60) message = 'Correct. Il faut revoir les détails techniques.';
+            else message = 'À retravailler. Révisez les protocoles.';
+
+            const html = `
+                <div class="results">
+                    <div class="results-title">Quiz Terminé!</div>
+                    <div class="score-display">
+                        <div class="score-number">${score}/${questions.length}</div>
+                        <div class="score-text">${percentage}%</div>
+                        <div style="margin-top: 15px; font-size: 16px;">${message}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('quiz-container').innerHTML = html;
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('prev-btn').style.display = 'none';
+            document.getElementById('restart-btn').style.display = 'inline-block';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            selectedAnswer = -1;
+            document.getElementById('next-btn').style.display = 'inline-block';
+            document.getElementById('prev-btn').style.display = 'inline-block';
+            document.getElementById('restart-btn').style.display = 'none';
+            displayQuestion();
+        }
+
+        // Initialiser
+        displayQuestion();
+    </script>
+</body>
+</html>
